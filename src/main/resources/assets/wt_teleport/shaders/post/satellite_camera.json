@@ -1,0 +1,21 @@
+{
+    "targets": [
+        "swap"
+    ],
+    "passes": [
+        {
+            "name": "wt_teleport:satellite_camera",
+            "intarget": "minecraft:main",
+            "outtarget": "swap",
+            "uniforms": [
+                { "name": "ExposureIntensity", "values": [ 0.0 ] },
+                { "name": "ColorGradeStrength", "values": [ 0.0 ] }
+            ]
+        },
+        {
+            "name": "blit",
+            "intarget": "swap",
+            "outtarget": "minecraft:main"
+        }
+    ]
+}
