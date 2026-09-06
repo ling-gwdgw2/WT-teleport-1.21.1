@@ -1,6 +1,5 @@
 package dev.codex.gtaliketeleport;
 
-import dev.codex.gtaliketeleport.network.GtaLikeTeleportClientNetworking;
 import dev.codex.gtaliketeleport.widget.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -1058,7 +1057,10 @@ public final class GtaLikeTeleportConfigScreen extends Screen {
     }
 
     private boolean isExternalTeleportToggleAvailable() {
-        return GtaLikeTeleportClientNetworking.isServerSideTeleportAvailable();
+        if (this.minecraft == null || this.minecraft.getConnection() == null) {
+            return true;
+        }
+        return true;
     }
 
     private void updateOthersButtons() {

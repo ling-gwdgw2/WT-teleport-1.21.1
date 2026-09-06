@@ -4,10 +4,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,8 +29,7 @@ public final class GtaLikeTeleport {
 
         // Register client setup if we are on the physical client side
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            modEventBus.addListener(this::clientSetup);
-            modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, parent) -> new GtaLikeTeleportConfigScreen(parent));
+            dev.codex.gtaliketeleport.client.ClientModEvents.init(modEventBus, modContainer);
         }
     }
 
@@ -42,7 +39,11 @@ public final class GtaLikeTeleport {
         registrar.playToClient(
                 dev.codex.gtaliketeleport.network.GtaLikeTeleportNetworkPayloads.StartServerTeleportPayload.TYPE,
                 dev.codex.gtaliketeleport.network.GtaLikeTeleportNetworkPayloads.StartServerTeleportPayload.CODEC,
-                dev.codex.gtaliketeleport.network.GtaLikeTeleportClientNetworking::handleStartTeleport
+                (payload, context) -> {
+                    if (FMLEnvironment.dist == Dist.CLIENT) {
+                        dev.codex.gtaliketeleport.client.ClientModEvents.handleStartTeleport(payload, context);
+                    }
+                }
         );
 
         registrar.playToServer(
@@ -64,11 +65,5 @@ public final class GtaLikeTeleport {
             GtaLikeTeleportConfig.load();
         }
     }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        LOGGER.info("Grand Teleport Client Setup");
-        dev.codex.gtaliketeleport.client.GtaLikeTeleportClient.init();
-        NeoForge.EVENT_BUS.register(dev.codex.gtaliketeleport.client.GtaLikeTeleportClient.class);
-    }
-
 }
+
